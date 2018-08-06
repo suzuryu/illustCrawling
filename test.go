@@ -28,7 +28,7 @@ func DownloadImgFromURL(img_url string) {
 	}
 
 	// thumb img is mini size image
-	//
+	// so i will download original image that has no "thumb" in url
 	const thumb_str string = "thumb"
 	if strings.LastIndex(img_url, thumb_str) == -1 {
 		img_url = img_url[1:]
