@@ -45,7 +45,7 @@ func DownloadImgFromURL(img_url string, anime Anime) {
 		img_url = img_url[:strings.LastIndex(img_url, thumb_str)-1] + expanded
 	}
 	fmt.Println(img_url)
-
+	time.Sleep(5 * time.Second)
 	res, err := http.Get(base_url + img_url)
 	CheckandLoggingError(err)
 	defer res.Body.Close()
@@ -57,6 +57,8 @@ func DownloadImgFromURL(img_url string, anime Anime) {
 
 	// download image
 	io.Copy(file, res.Body)
+
+	time.Sleep(5 * time.Second)
 }
 
 func GetImgfromWeb(url string, anime Anime) {
@@ -72,7 +74,6 @@ func GetImgfromWeb(url string, anime Anime) {
 	CheckandLoggingError(err)
 	doc.Find("img").Each(func(_ int, s *goquery.Selection) {
 		img_url, _ := s.Attr("src")
-		time.Sleep(5 * time.Second)
 		DownloadImgFromURL(img_url, anime)
 	})
 
