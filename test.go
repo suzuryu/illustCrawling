@@ -69,6 +69,11 @@ func GetImgURLfromWeb(url string) {
 }
 
 func main() {
-	const url string = "http://animekabegami.com/select?title=%E3%81%AF%E3%81%9F%E3%82%89%E3%81%8F%E7%B4%B0%E8%83%9E"
+	if len(os.Args) != 2 {
+		fmt.Println("argument error. command line argument must 2")
+		return
+	}
+	anime_title := os.Args[1]
+	url := "http://animekabegami.com/select?title=" + anime_title
 	GetImgURLfromWeb(url)
 }
