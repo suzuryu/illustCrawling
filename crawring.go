@@ -45,7 +45,7 @@ func DownloadImgFromURL(img_url string, anime Anime) {
 		img_url = img_url[:strings.LastIndex(img_url, thumb_str)-1] + expanded
 	}
 	fmt.Println(img_url)
-	time.Sleep(5 * time.Second)
+
 	res, err := http.Get(base_url + img_url)
 	CheckandLoggingError(err)
 	defer res.Body.Close()
@@ -97,13 +97,15 @@ func GetAnimeList(url string) {
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	CheckandLoggingError(err)
 
-	doc.Find(".side-menu-body ul li a").Each(func(_ int, s *goquery.Selection) {
-		anime := Anime{}
-		anime.url, _ = s.Attr("href")
-		anime.title = s.Text()
-		fmt.Println(anime.title, anime.url)
-		os.Mkdir("../../AnimeKabegami/"+anime.title, 0777)
-		GetImgfromWeb(url+anime.url[2:], anime)
+	doc.Find(".side-menu-body ul li a").Each(func(i int, s *goquery.Selection) {
+		if i >= 2 {
+			anime := Anime{}
+			anime.url, _ = s.Attr("href")
+			anime.title = s.Text()
+			fmt.Println(anime.title, anime.url)
+			os.Mkdir("../../AnimeKabegami/"+anime.title, 0777)
+			GetImgfromWeb(url+anime.url[2:], anime)
+		}
 	})
 }
 
