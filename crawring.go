@@ -44,12 +44,13 @@ func DownloadImgFromURL(img_url string, anime Anime) {
 		expanded := img_url[strings.LastIndex(img_url, "."):]
 		img_url = img_url[:strings.LastIndex(img_url, thumb_str)-1] + expanded
 	}
+	fmt.Println(img_url)
+
 	res, err := http.Get(base_url + img_url)
 	CheckandLoggingError(err)
 	defer res.Body.Close()
 
 	img_name := img_url[strings.LastIndex(img_url, "/")+1:]
-	//	fmt.Println(img_name)
 	file, err := os.Create("../../AnimeKabegami/" + anime.title + "/" + img_name)
 	CheckandLoggingError(err)
 	defer file.Close()
@@ -71,7 +72,6 @@ func GetImgfromWeb(url string, anime Anime) {
 	CheckandLoggingError(err)
 	doc.Find("img").Each(func(_ int, s *goquery.Selection) {
 		img_url, _ := s.Attr("src")
-		fmt.Println(img_url)
 		time.Sleep(5 * time.Second)
 		DownloadImgFromURL(img_url, anime)
 	})
@@ -109,8 +109,5 @@ func GetAnimeList(url string) {
 func main() {
 	os.Mkdir("../../AnimeKabegami", 0777)
 	url := "http://animekabegami.com/"
-	//url = "http://animekabegami.com/select?title=C"
 	GetAnimeList(url)
-	//anime := Anime{"C (26)", "http://animekabegami.com/select?title=C"}
-	//GetImgfromWeb(url, anime)
 }
