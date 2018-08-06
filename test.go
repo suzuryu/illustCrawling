@@ -50,7 +50,7 @@ func DownloadImgFromURL(img_url string) {
 	io.Copy(file, res.Body)
 }
 
-func GetImgURLfromWeb(url string) {
+func GetImgfromWeb(url string) {
 	res, err := http.Get(url)
 	CheckandLoggingError(err)
 	defer res.Body.Close()
@@ -75,5 +75,5 @@ func main() {
 	}
 	anime_title := os.Args[1]
 	url := "http://animekabegami.com/select?title=" + anime_title
-	GetImgURLfromWeb(url)
+	GetImgfromWeb(url)
 }
