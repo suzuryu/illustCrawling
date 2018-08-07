@@ -17,14 +17,6 @@ type Anime struct {
 	url   string
 }
 
-func HttpGet(url string) *http.Response {
-	res, err := http.Get(url)
-	CheckandLoggingError(err)
-	defer res.Body.Close()
-
-	return res
-}
-
 func CheckandLoggingError(err error) {
 	is_err := err != nil
 	if is_err {
@@ -85,7 +77,9 @@ func DownloadImgFromURL(img_url string, anime Anime) {
 
 	// download image
 	const base_url string = "http://animekabegami.com"
-	res := HttpGet(base_url + img_url)
+	res, err := http.Get(base_url + img_url)
+	CheckandLoggingError(err)
+	defer res.Body.Close()
 
 	// save image file
 	file, err := os.Create(img_path)
@@ -97,7 +91,10 @@ func DownloadImgFromURL(img_url string, anime Anime) {
 }
 
 func GetImgfromWeb(url string, anime Anime) {
-	res := HttpGet(url)
+	res, err := http.Get(url)
+	CheckandLoggingError(err)
+	defer res.Body.Close()
+
 	CheckStatusCode(res.StatusCode)
 
 	// download current page's images
@@ -118,7 +115,10 @@ func GetImgfromWeb(url string, anime Anime) {
 }
 
 func DownloadAllAnimeImages(url string) {
-	res := HttpGet(url)
+	res, err := http.Get(url)
+	CheckandLoggingError(err)
+	defer res.Body.Close()
+
 	CheckStatusCode(res.StatusCode)
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
@@ -126,7 +126,7 @@ func DownloadAllAnimeImages(url string) {
 
 	doc.Find(".side-menu-body ul li a").Each(func(i int, s *goquery.Selection) {
 		// すでにダウンロードしてるの飛ばすため１０からスタート
-		if i > 9 {
+		if i > 15 {
 			anime := Anime{}
 			anime.url, _ = s.Attr("href")
 			anime.title = s.Text()
