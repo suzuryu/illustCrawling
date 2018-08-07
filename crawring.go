@@ -83,11 +83,11 @@ func DownloadImgFromURL(img_url string, anime Anime) {
 		return
 	}
 
-	// GET img
+	// download image
 	const base_url string = "http://animekabegami.com"
 	res := HttpGet(base_url + img_url)
 
-	// download image
+	// save image file
 	file, err := os.Create(img_path)
 	CheckandLoggingError(err)
 	defer file.Close()
@@ -100,6 +100,7 @@ func GetImgfromWeb(url string, anime Anime) {
 	res := HttpGet(url)
 	CheckStatusCode(res.StatusCode)
 
+	// download current page's images
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	CheckandLoggingError(err)
 	doc.Find("img").Each(func(_ int, s *goquery.Selection) {
@@ -107,6 +108,7 @@ func GetImgfromWeb(url string, anime Anime) {
 		DownloadImgFromURL(img_url, anime)
 	})
 
+	// go to the next page
 	doc.Find(".paging .blk2 a").Each(func(_ int, s *goquery.Selection) {
 		if s.Text() == "次へ" {
 			next_url, _ := s.Attr("href")
@@ -115,7 +117,7 @@ func GetImgfromWeb(url string, anime Anime) {
 	})
 }
 
-func GetAnimeList(url string) {
+func DownloadAllAnimeImages(url string) {
 	res := HttpGet(url)
 	CheckStatusCode(res.StatusCode)
 
@@ -129,10 +131,13 @@ func GetAnimeList(url string) {
 			anime.url, _ = s.Attr("href")
 			anime.title = s.Text()
 			fmt.Println(anime.title, anime.url)
+
 			anime.title = strings.Replace(anime.title, "/", "_", -1)
 			anime.title = strings.Replace(anime.title, "?", "_", -1)
 			anime.title = strings.Replace(anime.title, ":", "_", -1)
+
 			os.Mkdir("../../AnimeKabegami/"+anime.title, 0777)
+
 			GetImgfromWeb(url+anime.url[2:], anime)
 		}
 	})
@@ -141,5 +146,5 @@ func GetAnimeList(url string) {
 func main() {
 	os.Mkdir("../../AnimeKabegami", 0777)
 	url := "http://animekabegami.com/"
-	GetAnimeList(url)
+	DownloadAllAnimeImages(url)
 }
