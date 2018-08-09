@@ -125,21 +125,18 @@ func DownloadAllAnimeImages(url string) {
 	CheckandLoggingError(err)
 
 	doc.Find(".side-menu-body ul li a").Each(func(i int, s *goquery.Selection) {
-		// すでにダウンロードしてるの飛ばすため１０からスタート
-		if i > 15 {
-			anime := Anime{}
-			anime.url, _ = s.Attr("href")
-			anime.title = s.Text()
-			fmt.Println(anime.title, anime.url)
+		anime := Anime{}
+		anime.url, _ = s.Attr("href")
+		anime.title = s.Text()
+		fmt.Println(anime.title, anime.url)
 
-			anime.title = strings.Replace(anime.title, "/", "_", -1)
-			anime.title = strings.Replace(anime.title, "?", "_", -1)
-			anime.title = strings.Replace(anime.title, ":", "_", -1)
+		anime.title = strings.Replace(anime.title, "/", "_", -1)
+		anime.title = strings.Replace(anime.title, "?", "_", -1)
+		anime.title = strings.Replace(anime.title, ":", "_", -1)
 
-			os.Mkdir("../../AnimeKabegami/"+anime.title, 0777)
+		os.Mkdir("../../AnimeKabegami/"+anime.title, 0777)
 
-			GetImgfromWeb(url+anime.url[2:], anime)
-		}
+		GetImgfromWeb(url+anime.url[2:], anime)
 	})
 }
 
